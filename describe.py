@@ -51,8 +51,13 @@ def var(args: int):
 def main():
     try:
         assert len(sys.argv) == 2, "Invalid number of parameter"
-        data = load(sys.argv[1])
-        data.describe()
+        data: pd.DataFrame  = load(sys.argv[1])
+        print(data.describe())
+        for col in data.columns:
+            data = data.dropna(subset=[col])
+            # data = data[data[col].str.strip().astype(bool)]
+
+            print(f"{col} count : {len(data[col])}")
     except Exception as e:
         print(f"Error: {e}")
 
