@@ -50,8 +50,8 @@ def var(args: int):
 
 def ft_min(args: int):
     '''return the minimum int'''
-    if not args:
-        raise ValueError("There is nothing.")
+    # if not args:
+    #     raise ValueError("There is nothing.")
     values = list(args)
     minimum = values[0]
     for val in values:
@@ -64,8 +64,8 @@ def ft_min(args: int):
 
 def ft_max(args: int):
     '''return the maximum int'''
-    if not args:
-        raise ValueError("There is nothing.")
+    # if not args:
+    #     raise ValueError("There is nothing.")
     values = list(args)
     maximum = values[0]
     for val in values:
@@ -73,17 +73,29 @@ def ft_max(args: int):
             maximum = val
     return maximum
 
+def apply_function(data: pd.DataFrame, func):
+    '''Apply the function on every colummn from data: panda.DataFrame'''
+    for col in data.columns:
+        print(f"{col} {func.__name__}:{func(data[col])}")
 
 def main():
     try:
         assert len(sys.argv) == 2, "Invalid number of parameter"
         data: pd.DataFrame  = load(sys.argv[1])
-        print(data.describe())
+        functions = [len, mean, std, ft_min, ft_max]
+
+        # delete the 6 first columns
+        data = data.iloc[:, 6:]
+
+        # delete all empty lines
         for col in data.columns:
             data = data.dropna(subset=[col])
-            # data = data[data[col].str.strip().astype(bool)]
+        # print(data.describe())
 
-            print(f"{col} count : {len(data[col])}")
+        #apply each function on the dataframe
+        for f in functions:
+            apply_function(data, f)
+
     except Exception as e:
         print(f"Error: {e}")
 
