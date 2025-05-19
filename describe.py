@@ -48,6 +48,32 @@ def var(args: int):
     return sum((xi - meanValue)**2 for xi in args) / len(args)
 
 
+def ft_min(args: int):
+    '''return the minimum int'''
+    if not args:
+        raise ValueError("There is nothing.")
+    values = list(args)
+    minimum = values[0]
+    for val in values:
+        if val < minimum:
+            minimum = val
+    # Or
+    # values.sort()
+    # minimum = values[0]
+    return minimum
+
+def ft_max(args: int):
+    '''return the maximum int'''
+    if not args:
+        raise ValueError("There is nothing.")
+    values = list(args)
+    maximum = values[0]
+    for val in values:
+        if val > maximum:
+            maximum = val
+    return maximum
+
+
 def main():
     try:
         assert len(sys.argv) == 2, "Invalid number of parameter"
