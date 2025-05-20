@@ -4,6 +4,12 @@ DataScience Logistic Regression
 ## Project Overview
 This project introduces data science concepts and logistic regression in a playful Harry Potter-themed scenario. You'll analyze and visualize data, then build a multi-class logistic regression classifier to replicate the Sorting Hat.
 
+## Usage
+
+To install the requirements do this in your terminal
+```bash
+>> ./setup.sh
+```
 
 ##  Objectives
 
@@ -60,3 +66,8 @@ Gradient descent update rule:
 ```bash
 ∂J(θ)/∂θj = (1/m) ∑ (hθ(x(i)) − y(i)) x(i)_j
 ```
+
+## Reference
+
+- `https://matplotlib.org/`
+- `https://pandas.pydata.org/docs/`
