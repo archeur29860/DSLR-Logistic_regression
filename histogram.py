@@ -19,31 +19,38 @@ def load(path: str, index_column=None) -> pd.DataFrame:
 
 
 def plot_histograms(data):
-    '''Show the histogram by features'''
-    houses = data["Hogwarts House"].unique()
-    features = [col for col in data.columns if col not in ["Index", "Hogwarts House", "First Name", "Last Name", "Birthday", "Best Hand"]]
-    house_colors = {
-        "Gryffindor": "#740001",
-        "Hufflepuff": "#EEBA35",
-        "Ravenclaw": "#0F1D4A", 
-        "Slytherin": "#1A472A" 
-    }
-    for feature in features:
-        plt.figure(figsize=(10, 6))
-        for house in houses:
-            house_data = data[data["Hogwarts House"] == house][feature]
-            house_data = house_data.dropna()
-            plt.hist(house_data, alpha=0.6, bins=20, label=house, color=house_colors.get(house, 'pink'))
+    try:
+        '''Show the histogram by features'''
+        houses = data["Hogwarts House"].unique()
+        features = [col for col in data.columns if col not in ["Index",\
+            "Hogwarts House", "First Name", "Last Name", "Birthday",\
+            "Best Hand"]]
+        house_colors = {
+            "Gryffindor": "#740001",
+            "Hufflepuff": "#EEBA35",
+            "Ravenclaw": "#0F1D4A", 
+            "Slytherin": "#1A472A" 
+        }
+        for feature in features:
+            plt.figure(figsize=(10, 6))
+            for house in houses:
+                house_data = data[data["Hogwarts House"] == house][feature]
+                house_data = house_data.dropna() # remove the NAN value
+                plt.hist(house_data, alpha=0.6, bins=20, label=house, color=house_colors.get(house, 'pink'))
 
-        plt.title(f"Histogram of {feature} by House")
-        plt.xlabel("Score")
-        plt.ylabel("Number of Students")
-        plt.legend()
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
+            plt.title(f"Histogram of {feature} by House")
+            plt.xlabel("Score")
+            plt.ylabel("Number of Students")
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+
+    except Exception as e:
+        print(f"Error: {e}")
+
 
 def main():
+
     if len(sys.argv) != 2:
         print("Usage: python histogram.py dataset_train.csv")
         return
@@ -53,4 +60,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.stderr.write("\ninteruption...\n bye\n")
+        exit(1)

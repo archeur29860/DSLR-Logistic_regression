@@ -119,4 +119,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.stderr.write("\ninteruption...\n bye\n")
+        exit(1)
