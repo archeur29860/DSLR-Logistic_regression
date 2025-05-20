@@ -2,6 +2,39 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 from utils import load
+from describe import Std
+
+
+def find_homogenous_course(data: pd.DataFrame, col_course, col_house="Hogwarts House"):
+    '''Find the most homogenous course'''
+    G = []
+    H = []
+    R = []
+    S = []
+    # print(data)
+    for i in data["Index"]:
+        house = data[col_house][i]
+        # print(house)
+        # print(data[col_course][i], col_course)
+        match house:
+            case "Gryffindor":
+                G.append(data[col_course][i])
+            case "Hufflepuff":
+                H.append(data[col_course][i])
+            case "Ravenclaw":
+                R.append(data[col_course][i])
+            case "Slytherin":
+                S.append(data[col_course][i])
+            case _:
+                print("No house")
+    # print(G)
+    # print(G)
+    # print(G)
+    # print(S)
+    res = (Std(G) + Std(H) + Std(R) + Std(S)) / 4
+    return res
+
+
 
 
 def plot_histograms(data: pd.DataFrame):
@@ -56,7 +89,11 @@ def main():
         print("Usage: python histogram.py dataset_train.csv")
         return
     data = load(sys.argv[1])
+    res = []
     if data is not None:
+        for col in data.iloc[:, 6:].columns:
+            res.append(find_homogenous_course(data.dropna(subset=[col]), col))
+            print(f"{col}: {res[-1]}")
         plot_histograms(data)
 
 
