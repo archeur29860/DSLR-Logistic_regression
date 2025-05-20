@@ -1,19 +1,6 @@
 import pandas as pd
-import os
 import sys
-
-def load(path: str, index_column=None) -> pd.DataFrame:
-    '''Load a csv file into DataFrame from pandas with a column index ->
- default set to None'''
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(script_dir, path)
-
-        data = pd.read_csv(csv_path, index_col=index_column)
-        return data
-    except Exception:
-        print(f"Error: no such a file or directory: {path}")
-    return None
+from utils import load
 
 
 def Mean(args: any):
@@ -54,8 +41,6 @@ def var(args: int):
 
 def Min(args: int):
     '''return the minimum int'''
-    # if not args:
-    #     raise ValueError("There is nothing.")
     values = list(args)
     minimum = values[0]
     for val in values:
@@ -66,8 +51,6 @@ def Min(args: int):
 
 def Max(args: int):
     '''return the maximum int'''
-    # if not args:
-    #     raise ValueError("There is nothing.")
     values = list(args)
     maximum = values[0]
     for val in values:
@@ -82,9 +65,11 @@ def Count(args: int):
 
 
 def apply_functions(data: pd.DataFrame, functions):
-    '''Apply a list of functions to all columns and return a result DataFrame'''
+    '''Apply a list of functions to all columns and return a
+ result DataFrame'''
     results = {}
     for col in data.columns:
+        data = data.dropna(subset=[col])
         stats = {}
         for func in functions:
             try:
@@ -108,9 +93,9 @@ def main():
         data = data.iloc[:, 6:]
 
         # supprimer toutes les lignes avec au moins une cellule vide
-        data = data.dropna(how="any")
+        # data = data.dropna(how="any")
 
-        # appliquer les fonctions et afficher sous forme de DataFrame
+        # apply functions and print DataFrame
         result_df = apply_functions(data, functions)
         print(result_df)
 
@@ -122,5 +107,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        sys.stderr.write("\ninteruption...\n bye\n")
+        sys.stderr.write("\ninteruption...\nbye!!!\n")
         exit(1)
