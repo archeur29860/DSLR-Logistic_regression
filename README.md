@@ -54,7 +54,21 @@ We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27
 
 ### 3. Logistic Regression
 - ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights.
-- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights.
+- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights. That will save ``houses.csv``.
+
+`houses.csv`
+```sh
+$> cat houses.csv
+Index,Hogwarts House
+0,Gryffindor
+1,Hufflepuff
+2,Ravenclaw
+3,Hufflepuff
+4,Slytherin
+5,Ravenclaw
+6,Hufflepuff
+[...]
+```
 
 ## Math Reference
 Cost function:
