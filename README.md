@@ -44,9 +44,31 @@ Script describe.py that calculates summary statistics manually:
 - ``scatter_plot.py``: Find and visualize the two most similar features.
 - ``pair_plot.py``: Create a pair plot to choose the best features for logistic regression.
 
+#### histogram
+![Alt text](histo_all_course.png)
+_Which Hogwarts course has a homogeneous score distribution between all four houses?_
+
+We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27s_test)
+
+![Alt text](homogenous_course.png)
+
 ### 3. Logistic Regression
 - ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights.
-- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights.
+- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights. That will save ``houses.csv``.
+
+`houses.csv`
+```sh
+$> cat houses.csv
+Index,Hogwarts House
+0,Gryffindor
+1,Hufflepuff
+2,Ravenclaw
+3,Hufflepuff
+4,Slytherin
+5,Ravenclaw
+6,Hufflepuff
+[...]
+```
 
 ## Math Reference
 Cost function:
@@ -67,7 +89,10 @@ Gradient descent update rule:
 ∂J(θ)/∂θj = (1/m) ∑ (hθ(x(i)) − y(i)) x(i)_j
 ```
 
+
+
 ## Reference
 
 - `https://matplotlib.org/`
 - `https://pandas.pydata.org/docs/`
+- `https://fr.statisticseasily.com/glossaire/Qu'est-ce-que-l'homog%C3%A9n%C3%A9it%C3%A9-en-statistique-et-en-science-des-donn%C3%A9es/`

@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 import os
+from utils import load
 from describe import Std
 
 
@@ -11,20 +12,6 @@ house_colors = {
     "Ravenclaw": "#0F1D4A", 
     "Slytherin": "#1A472A" 
 }
-
-
-def load(path: str, index_column=None) -> pd.DataFrame:
-    '''Load a csv file into DataFrame from pandas with a column index ->
- default set to None'''
-    try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(script_dir, path)
-
-        data = pd.read_csv(csv_path, index_col=index_column)
-        return data
-    except Exception:
-        print(f"Error: no such a file or directory: {path}")
-    return None
 
 
 def covariance(X, Y):
@@ -65,9 +52,8 @@ def scatter_plot(data: pd.DataFrame):
     
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python scatter_plot.py dataset_train.csv")
-        return
+    assert len(sys.argv) == 2, "Usage: python scatter_plot.py dataset_train.csv"
+
     data = load(sys.argv[1])
     if data is not None:
         scatter_plot(data)
