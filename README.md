@@ -44,13 +44,24 @@ Script describe.py that calculates summary statistics manually:
 - ``scatter_plot.py``: Find and visualize the two most similar features.
 - ``pair_plot.py``: Create a pair plot to choose the best features for logistic regression.
 
-#### histogram
-![Alt text](histo_all_course.png)
+#### 2.1 histogram
+----
+![Alt text](img/histo_all_course.png)
 _Which Hogwarts course has a homogeneous score distribution between all four houses?_
 
 We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27s_test)
 
-![Alt text](homogenous_course.png)
+![Alt text](img/homogenous_course.png)
+
+#### 2.2 scatter_plot.py
+----
+_What are the `two features` that are similar ?_
+
+### 2.3 pair_plot
+
+![Alt text](img/pair_plot_md.png)
+
+_From this visualization, what features are you going to use for your logistic regression?_
 
 ### 3. Logistic Regression
 - ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights.

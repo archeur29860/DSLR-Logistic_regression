@@ -120,7 +120,7 @@ def plot_histograms(data: pd.DataFrame):
         fig.delaxes(axes[j])
 
     plt.tight_layout()
-    plt.savefig("histo_all_course.png")
+    plt.savefig("img/histo_all_course.png")
     plt.show()
 
 
@@ -136,13 +136,13 @@ def plot_histograms_homogenous(course, data):
             label=house,
             color=house_colors.get(house, 'pink'))
 
-    ax.set_title("the most homogenous course :"+ course)
+    ax.set_title("the most homogenous course : " + course)
     ax.set_xlabel("Score")
     ax.set_ylabel("Count")
     ax.grid(True)
     ax.legend()
     plt.tight_layout()
-    plt.savefig("homogenous_course.png")
+    plt.savefig("img/homogenous_course.png")
     plt.show()
 
 

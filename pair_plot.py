@@ -78,6 +78,7 @@ def main():
                     continue
 
         fig.canvas.mpl_connect('button_press_event', lambda event: on_click(event, axes_map, subset, house_col))
+        plt.savefig("img/pair_plot.png")
         plt.show()
 
     except Exception as e:
