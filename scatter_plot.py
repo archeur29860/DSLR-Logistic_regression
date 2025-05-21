@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 import os
+from describe import Std
 
 
 house_colors = {
@@ -26,7 +27,36 @@ def load(path: str, index_column=None) -> pd.DataFrame:
     return None
 
 
-def scatter_plot(data):
+def covariance(X, Y):
+    n = len(X)
+    if n != len(Y):
+        raise ValueError("Both list must be the same lenght.")
+
+    mean_X = sum(X) / n
+    mean_Y = sum(Y) / n
+
+    total = 0
+    for i in range(n):
+        total += (X[i] - mean_X) * (Y[i] - mean_Y)
+
+    return total / (n - 1)
+
+
+def pearson_corr(X, Y):
+    cov = covariance(X, Y)
+    std_X = Std(X)
+    std_Y = Std(Y)
+    return cov / (std_X * std_Y)
+
+
+
+#+1 → quand X augmente, Y augmente parfaitement (ex : taille et poids dans une population homogène)
+
+#–1 → quand X augmente, Y diminue parfaitement (ex : vitesse ↔️ temps pour un même trajet)
+
+#0 → aucune tendance linéaire (ex : taille d’une personne et son numéro de téléphone)
+
+def scatter_plot(data: pd.DataFrame):
     try:
 
 
