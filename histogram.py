@@ -120,6 +120,7 @@ def plot_histograms(data: pd.DataFrame):
         fig.delaxes(axes[j])
 
     plt.tight_layout()
+    plt.savefig("histo_all_course.png")
     plt.show()
 
 
@@ -141,26 +142,29 @@ def plot_histograms_homogenous(course, data):
     ax.grid(True)
     ax.legend()
     plt.tight_layout()
+    plt.savefig("homogenous_course.png")
     plt.show()
 
 
 def main():
-
-    if len(sys.argv) != 2:
-        print("Usage: python histogram.py dataset_train.csv")
-        return
-    data = load(sys.argv[1])
-    res = {}
-    if data is not None:
-        for col in data.iloc[:, 6:].columns:
-            res[col] = find_homogenous_course(data.dropna(subset=[col]), col)
-            # print(f"{col}: {res[-1]}")
-        plot_histograms(data)
-        min_val = min(res.values())
-        homogenous_course = [k for k, v in res.items() if v == min_val]
-        print(homogenous_course[0])
-        plot_histograms_homogenous(homogenous_course[0], data)
-
+    try:
+        if len(sys.argv) != 2:
+            print("Usage: python histogram.py dataset_train.csv")
+            return
+        data = load(sys.argv[1])
+        res = {}
+        if data is not None:
+            for col in data.iloc[:, 6:].columns:
+                res[col] = find_homogenous_course(data.dropna(subset=[col]), col)
+                # print(f"{col}: {res[-1]}")
+            plot_histograms(data)
+            min_val = min(res.values())
+            homogenous_course = [k for k, v in res.items() if v == min_val]
+            print(f"with the test of Levene, we can determinated the most homogenous course:")
+            print(f"{homogenous_course[0]} with : {min_val}")
+            plot_histograms_homogenous(homogenous_course[0], data)
+    except Exception as e:
+        print(f"Error: {e}") 
 
 if __name__ == "__main__":
     try:

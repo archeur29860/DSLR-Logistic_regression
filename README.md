@@ -44,6 +44,14 @@ Script describe.py that calculates summary statistics manually:
 - ``scatter_plot.py``: Find and visualize the two most similar features.
 - ``pair_plot.py``: Create a pair plot to choose the best features for logistic regression.
 
+#### histogram
+![Alt text](histo_all_course.png)
+_Which Hogwarts course has a homogeneous score distribution between all four houses?_
+
+We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27s_test)
+
+![Alt text](homogenous_course.png)
+
 ### 3. Logistic Regression
 - ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights.
 - ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights.
@@ -52,7 +60,7 @@ Script describe.py that calculates summary statistics manually:
 Cost function:
 
 ```bash
-J(θ) = −(1/m) ∑ [ y(i) log(hθ(x(i))) + (1−y(i)) log(1−hθ(x(i)))]
+J(θ) = −(1/m) ∑ [ y(i) log(hθ(x<ins>i</ins>)) + (1−y<ins>i</ins>) log(1−hθ(x<ins>i</ins>))]
 ```
 
 Hypothesis:
@@ -64,8 +72,10 @@ hθ(x) = 1 / (1 + e^(−θᵀx))
 Gradient descent update rule:
 
 ```bash
-∂J(θ)/∂θj = (1/m) ∑ (hθ(x(i)) − y(i)) x(i)_j
+∂J(θ)/∂θj = (1/m) ∑ (hθ(x<ins>i</ins>) − y<ins>i</ins>) x<ins>i</ins><sup>j</sup>
 ```
+
+
 
 ## Reference
 
