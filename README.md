@@ -60,7 +60,7 @@ We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27
 Cost function:
 
 ```bash
-J(θ) = −(1/m) ∑ [ y(i) log(hθ(x<ins>i</ins>)) + (1−y<ins>i</ins>) log(1−hθ(x<ins>i</ins>))]
+J(θ) = −(1/m) ∑ [ y(i) log(hθ(x(i))) + (1−y(i)) log(1−hθ(x(i)))]
 ```
 
 Hypothesis:
@@ -72,7 +72,7 @@ hθ(x) = 1 / (1 + e^(−θᵀx))
 Gradient descent update rule:
 
 ```bash
-∂J(θ)/∂θj = (1/m) ∑ (hθ(x<ins>i</ins>) − y<ins>i</ins>) x<ins>i</ins><sup>j</sup>
+∂J(θ)/∂θj = (1/m) ∑ (hθ(x(i)) − y(i)) x(i)_j
 ```
 
 
