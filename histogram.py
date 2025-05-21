@@ -1,3 +1,13 @@
+"""
+This script analyzes course score distributions across Hogwarts houses.
+It uses Levene's test to identify the course with the most homogeneous variance
+and visualizes all course distributions as histograms.
+
+Usage:
+    python histogram.py dataset_train.csv
+"""
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -14,13 +24,20 @@ house_colors = {
 
 
 def ft_levene(groups):
-    '''Levene test'''
+    """
+    Perform Levene's test to assess the homogeneity of variances among multiple groups.
+
+    Parameters:
+        groups (list of lists): A list containing numerical lists, each representing a group.
+
+    Returns:
+        float: The Levene test statistic (W), indicating variance equality across groups.
+    """
     k = len(groups)
     n_total = sum(len(note) for note in groups)
 
     # 1 - median
     median_house = [median(note) for note in groups]
-    # print(f"median : {median_house}")
 
     # 2 - absolute deviations from median,
     Z_ij_all = []
@@ -46,28 +63,33 @@ def ft_levene(groups):
     for i in range(k):
         dem_group = []
         for Z_ij in Z_ij_all[i]:
-            # print(f"Zij: {Z_ij}")
             dem_group.append((Z_ij - mean_Zij[i]) ** 2)
-            # print(dem_group)
         dem += sum(dem_group)
-        # print(dem)
 
-    # statistic calculation of W
+    # 7 - statistic calculation of W
     W = ((n_total - k) / (k - 1)) * (numerator / dem)
 
     return(W)
 
 def find_homogenous_course(data: pd.DataFrame, col_course, col_house="Hogwarts House"):
-    '''Find the most homogenous course'''
+    """
+    Determine the homogeneity of a course across Hogwarts houses using Levene's test.
+
+    Parameters:
+        data (pd.DataFrame): The dataset containing students' scores and house information.
+        col_course (str): The name of the course/column to analyze.
+        col_house (str): The column name representing the Hogwarts house (default: "Hogwarts House").
+
+    Returns:
+        float: Levene test statistic for the selected course across houses.
+    """
+
     G = []
     H = []
     R = []
     S = []
-    # print(data)
     for i in data["Index"]:
         house = data[col_house][i]
-        # print(house)
-        # print(data[col_course][i], col_course)
         match house:
             case "Gryffindor":
                 G.append(data[col_course][i])
@@ -84,7 +106,17 @@ def find_homogenous_course(data: pd.DataFrame, col_course, col_house="Hogwarts H
 
 
 def plot_histograms(data: pd.DataFrame):
-    '''Show all histograms on a single page using subplots'''
+    """
+    Display histograms of all numerical features, grouped by Hogwarts house.
+
+    Parameters:
+        data (pd.DataFrame): The dataset containing student scores and house information.
+
+    Side effects:
+        - Displays a grid of histograms for all features.
+        - Saves the resulting figure to 'img/histo_all_course.png'.
+    """
+
     houses = data["Hogwarts House"].unique()
     features = [
         col for col in data.columns if col not in [
@@ -125,6 +157,18 @@ def plot_histograms(data: pd.DataFrame):
 
 
 def plot_histograms_homogenous(course, data):
+    """
+    Plot the histogram of the most homogenous course, grouped by Hogwarts house.
+
+    Parameters:
+        course (str): The name of the course identified as most homogenous.
+        data (pd.DataFrame): The dataset containing student scores and house information.
+
+    Side effects:
+        - Displays and saves a histogram figure for the specified course.
+        - Saves the plot to 'img/homogenous_course.png'.
+    """
+
     houses = data["Hogwarts House"].unique()
     fig, ax = plt.subplots(figsize=(8, 6))
     for house in houses:
@@ -147,6 +191,15 @@ def plot_histograms_homogenous(course, data):
 
 
 def main():
+    """
+    Main execution function. Loads the dataset, identifies the most homogenous course,
+    and generates histograms.
+
+    Side effects:
+        - Loads a dataset from command-line argument.
+        - Displays and saves visualizations.
+        - Prints the name of the most homogenous course according to Levene's test.
+    """
     try:
         if len(sys.argv) != 2:
             print("Usage: python histogram.py dataset_train.csv")
@@ -156,7 +209,6 @@ def main():
         if data is not None:
             for col in data.iloc[:, 6:].columns:
                 res[col] = find_homogenous_course(data.dropna(subset=[col]), col)
-                # print(f"{col}: {res[-1]}")
             plot_histograms(data)
             min_val = min(res.values())
             homogenous_course = [k for k, v in res.items() if v == min_val]

@@ -1,3 +1,13 @@
+"""
+This script analyzes a dataset to find and visualize the two most correlated features.
+It computes Pearson correlation coefficients for all pairs of numerical features
+and generates a scatter plot for the most correlated pair.
+
+Usage:
+    python scatter_plot.py dataset_train.csv
+"""
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -7,6 +17,16 @@ from describe import Std
 
 
 def covariance(X, Y):
+    """
+    Compute the covariance between two numerical lists.
+
+    Parameters:
+        X (list or array-like): First numerical dataset.
+        Y (list or array-like): Second numerical dataset.
+
+    Returns:
+        float: The covariance between X and Y.
+    """
     X = list(X)
     Y = list(Y)
     mean_X = sum(X) / len(X)
@@ -16,6 +36,17 @@ def covariance(X, Y):
 
 
 def pearson_corr(X, Y):
+    """
+    Compute the Pearson correlation coefficient between two datasets.
+
+    Parameters:
+        X (list or array-like): First numerical dataset.
+        Y (list or array-like): Second numerical dataset.
+
+    Returns:
+        float: The Pearson correlation coefficient between X and Y.
+               Returns NaN if one of the standard deviations is zero.
+    """
     cov = covariance(X, Y)
     std_X = Std(X)
     std_Y = Std(Y)
@@ -25,6 +56,15 @@ def pearson_corr(X, Y):
 
 
 def best_coef(coefs: dict):
+    """
+    Find the pair of features with the strongest correlation (in absolute value).
+
+    Parameters:
+        coefs (dict): Dictionary of feature pair names and their correlation coefficients.
+
+    Returns:
+        tuple: A tuple containing the name of the feature pair and the corresponding coefficient.
+    """
     best = None
     for key, value in coefs.items():
         print(f"{key}: {value}")
@@ -34,6 +74,17 @@ def best_coef(coefs: dict):
 
 
 def scatter_plot(data: pd.DataFrame):
+    """
+    Compute Pearson correlations between all feature pairs in the dataset,
+    identify the most similar pair, and display a scatter plot for that pair.
+
+    Parameters:
+        data (pd.DataFrame): The input DataFrame containing the dataset.
+
+    Side effects:
+        - Displays and saves a scatter plot of the most correlated feature pair.
+        - Prints correlation coefficients and the most similar feature pair.
+    """
     try:
         data = data.iloc[:, 6:]
         data = data.dropna()
@@ -69,6 +120,15 @@ def scatter_plot(data: pd.DataFrame):
     
 
 def main():
+    """
+    Main function that loads the dataset from command-line arguments
+    and generates the scatter plot for the most correlated features.
+
+    Side effects:
+        - Loads a CSV file specified via command-line.
+        - Calls scatter_plot() on the loaded data.
+        - Prints error messages in case of incorrect usage or failure.
+    """
     try:
         assert len(sys.argv) == 2, "Usage: python scatter_plot.py dataset_train.csv"
 

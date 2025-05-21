@@ -1,3 +1,13 @@
+"""
+This script generates a Seaborn pairplot of course features from the Hogwarts dataset.
+Clicking on any scatter plot opens a focused scatter plot for the selected feature pair,
+grouped by Hogwarts house.
+
+Usage:
+    python pair_plot.py dataset_train.csv
+"""
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,6 +24,19 @@ house_colors = {
 
 
 def on_click(event, axes_map, data, house_col='Hogwarts House'):
+    """
+    Callback function triggered on a mouse click inside a scatter plot.
+
+    Parameters:
+        event (MouseEvent): The matplotlib event object.
+        axes_map (dict): A mapping from subplot axes to (x_col, y_col) feature names.
+        data (pd.DataFrame): The dataset used for plotting.
+        house_col (str): Column name for the house grouping (default: 'Hogwarts House').
+
+    Side effects:
+        - Opens a new window with a focused scatter plot of the clicked feature pair.
+    """
+
     ax = event.inaxes
     if ax is None:
         return
@@ -44,8 +67,18 @@ def on_click(event, axes_map, data, house_col='Hogwarts House'):
     except Exception as e:
         print(f"on_click error: {e}")
 
-
 def main():
+    """
+    Main execution function. Loads the dataset and generates a Seaborn pairplot
+    for all numerical course features, grouped by Hogwarts house.
+
+    Side effects:
+        - Loads data from a CSV file passed via command-line.
+        - Displays a pairplot with interactive scatter plots.
+        - Saves the pairplot image to 'img/pair_plot.png'.
+        - Registers a click event to generate individual plots on demand.
+    """
+
     try:
         assert len(sys.argv) == 2, "Invalid number of parameters"
         data: pd.DataFrame = load(sys.argv[1])
