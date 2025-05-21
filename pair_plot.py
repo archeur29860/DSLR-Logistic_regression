@@ -4,6 +4,7 @@ import seaborn as sns
 import sys
 from utils import load
 
+
 house_colors = {
     "Gryffindor": "#740001",
     "Hufflepuff": "#EEBA35",

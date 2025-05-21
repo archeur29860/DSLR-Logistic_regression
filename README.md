@@ -57,6 +57,16 @@ We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27
 ----
 _What are the `two features` that are similar ?_
 
+We use the [Pearson correclation coefficient](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) to find the most similar pair of features:
+
+* +1 → when X increase, Y increase equaly
+
+* –1 → when X increase, Y decreases equaly
+
+* 0 → no linear trend
+
+![Alt text](img/similar_features.png)
+
 ### 2.3 pair_plot
 
 ![Alt text](img/pair_plot_md.png)
