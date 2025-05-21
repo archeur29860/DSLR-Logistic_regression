@@ -71,3 +71,4 @@ Gradient descent update rule:
 
 - `https://matplotlib.org/`
 - `https://pandas.pydata.org/docs/`
+- `https://fr.statisticseasily.com/glossaire/Qu'est-ce-que-l'homog%C3%A9n%C3%A9it%C3%A9-en-statistique-et-en-science-des-donn%C3%A9es/`
