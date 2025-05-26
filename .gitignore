@@ -176,7 +176,7 @@ cython_debug/
 
 
 
-img/pair_plot.png
+img
 houses.csv
 classifiers.txt
 normalization_params.txt

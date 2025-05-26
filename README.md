@@ -46,12 +46,12 @@ Script describe.py that calculates summary statistics manually:
 
 #### 2.1 histogram
 ----
-![Alt text](img/histo_all_course.png)
+![Alt text](asset/histo_all_course_md.png)
 _Which Hogwarts course has a homogeneous score distribution between all four houses?_
 
 We can answerd with the [test of Levene](https://en.wikipedia.org/wiki/Levene%27s_test)
 
-![Alt text](img/homogenous_course.png)
+![Alt text](asset/homogenous_course_md.png)
 
 #### 2.2 scatter_plot.py
 ----
@@ -65,11 +65,11 @@ We use the [Pearson correclation coefficient](https://en.wikipedia.org/wiki/Pear
 
 * 0 → no linear trend
 
-![Alt text](img/similar_features.png)
+![Alt text](asset/similar_features_md.png)
 
 ### 2.3 pair_plot
 
-![Alt text](img/pair_plot_md.png)
+![Alt text](asset/pair_plot_md.png)
 
 _From this visualization, what features are you going to use for your logistic regression?_
 
@@ -78,10 +78,10 @@ _From this visualization, what features are you going to use for your logistic r
 - ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights, biais and for the normalization standard derivation and means for all feature
 
 ##### Sigmoid function
-![Alt text](img/Sigmoid-function.png)
+![Alt text](asset/Sigmoid-function_md.png)
 
 ##### One vs All
-![Alt text](img/one-vs-all.png)
+![Alt text](asset/one-vs-all_md.png)
 
 ----
 
