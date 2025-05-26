@@ -1,37 +1,46 @@
 from logreg_train import predict_class, normalize
 import pandas as pd
 from utils import load
+import sys
 
 
 def main():
     try:
-    data_test = load("datasets/dataset_test.csv")
+        assert len(sys.argv) == 2,\
+            "Usage: python histogram.py dataset_test.csv"
+        data_test = load(sys.argv[1])
 
-    classifiers = {}
+        classifiers = {}
 
-    with open("classifiers.txt", "r") as classifiers_file:
-        lines = classifiers_file.read().split("\n")
-        for line in lines:
-            if line == "":
-                break
-            class_name, str_values = line.split(":")
-            list_values = str_values.split(",")
-            list_values[-1], intercept = list_values[-1].split(";")
-            classifiers[class_name] = ([float(i) for i in list_values], float(intercept))
+        with open("classifiers.txt", "r") as classifiers_file:
+            lines = classifiers_file.read().split("\n")
+            for line in lines:
+                if line == "":
+                    break
+                class_name, str_values = line.split(":")
+                list_values = str_values.split(",")
+                list_values[-1], intercept = list_values[-1].split(";")
+                classifiers[class_name] = ([float(i) for i in list_values],
+                                            float(intercept))
 
-    X_df = data_test.iloc[:, 6:]
-    X = X_df.values.tolist()  # list of lists
-    X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
+        X_df = data_test.iloc[:, 6:]
+        X = X_df.values.tolist()  # list of lists
+        X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
 
 
-    X = normalize(X)
+        X = normalize(X)
 
-    y_pred = [predict_class(xi, classifiers) for xi in X]
-    filename = "houses.csv"
-    with open(filename, "w") as f:
-        f.write("Index,Hogwarts House\n")
-        for i in range(len(y_pred)):
-            f.write(f"{i},{y_pred[i]}\n")
+        y_pred = [predict_class(xi, classifiers) for xi in X]
+        filename = "houses.csv"
+        with open(filename, "w") as f:
+            f.write("Index,Hogwarts House\n")
+            for i in range(len(y_pred)):
+                f.write(f"{i},{y_pred[i]}\n")
+
+        labels = data_test.loc[X_df.index, "Hogwarts House"].tolist()
+        correct = sum(1 for a, b in zip(labels, y_pred) if a == b)
+        accuracy = correct / len(labels)
+        print(f"Accuracy sur l'entraînement : {accuracy:.2%}")
     
     except Exception as e:
         print(f"Error: {e}")
