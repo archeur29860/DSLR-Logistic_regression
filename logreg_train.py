@@ -5,6 +5,13 @@ import matplotlib.pyplot as plt
 from describe import Max, Min
 from utils import load
 
+def save_normalization_params(means, stds, filename="normalization_params.txt"):
+    with open(filename, "w") as file:
+        means_str = ",".join(map(str, means))
+        stds_str = ",".join(map(str, stds))
+        file.write(f"mean={means_str}\nstd={stds_str}\n")
+
+
 def normalize(X):
     """
     Normalize a dataset using standard score normalization (mean = 0, std = 1).
@@ -17,10 +24,15 @@ def normalize(X):
     """
     cols = list(zip(*X))  # transpose
     normalized = []
+    means = []
+    stds = []
     for col in cols:
         mean = sum(col) / len(col)
         std = (sum((x - mean) ** 2 for x in col) / len(col)) ** 0.5
         normalized.append([(x - mean) / std for x in col])
+        means.append(mean)
+        stds.append(std)
+    save_normalization_params(means, stds)
     return list(map(list, zip(*normalized)))  # re-transpose
 
 
@@ -126,12 +138,13 @@ def main():
     data = load(sys.argv[1])
 
     # Select only numeric features
-    X_df = data.select_dtypes(include=["float64", "int64"]).dropna()
+    X_df = data.iloc[:, 6:]
     X = X_df.values.tolist()
 
     # Get target labels
     labels = data.loc[X_df.index, "Hogwarts House"].tolist()
     classes = sorted(set(labels))
+    X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
 
     X = normalize(X)
 

@@ -1,7 +1,31 @@
-from logreg_train import predict_class, normalize
+from logreg_train import predict_class
 import pandas as pd
 from utils import load
 import sys
+
+def load_normalization_params(filename="normalization_params.txt"):
+    with open(filename, "r") as file:
+        lines = file.readlines()
+        means = []
+        stds = []
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("mean="):
+                means = list(map(float, line.strip().split("=")[1].split(",")))
+            elif line.startswith("std="):
+                stds = list(map(float, line.strip().split("=")[1].split(",")))
+        return means, stds
+
+
+def normalize_w_param(X):
+    cols = list(zip(*X))  # transpose
+    normalized = []
+    means, stds = load_normalization_params()
+    for col, mean, std in zip(cols, means, stds):
+        normalized.append([(x - mean) / std if std != 0 else 0.0 for x in col])
+    return list(map(list, zip(*normalized)))  # re-transpose
 
 
 def main():
@@ -26,9 +50,8 @@ def main():
         X_df = data_test.iloc[:, 6:]
         X = X_df.values.tolist()  # list of lists
         X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
-
-
-        X = normalize(X)
+        
+        X = normalize_w_param(X)
 
         y_pred = [predict_class(xi, classifiers) for xi in X]
         filename = "houses.csv"

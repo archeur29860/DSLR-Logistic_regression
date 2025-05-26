@@ -179,3 +179,4 @@ cython_debug/
 img/pair_plot.png
 houses.csv
 classifiers.txt
+normalization_params.txt
