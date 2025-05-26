@@ -1,122 +1,116 @@
+import pandas as pd
 import math
-import pandas as pd
 import matplotlib.pyplot as plt
-import sys
-from utils import load
-# from describe import Std, median, Mean
+
+def normalize(X):
+    cols = list(zip(*X))  # transpose
+    normalized = []
+    for col in cols:
+        mean = sum(col) / len(col)
+        std = (sum((x - mean) ** 2 for x in col) / len(col)) ** 0.5
+        normalized.append([(x - mean) / std for x in col])
+    return list(map(list, zip(*normalized)))  # retranspose
 
 
-import matplotlib.pyplot as plt
-import pandas as pd
-from utils import load
+# Sigmoid : fonction d'activation logistique
+def sigmoid(z):
+    # Limiter z pour éviter les overflow
+    z = max(min(z, 100), -100)
+    return 1 / (1 + math.exp(-z))
+
+# Hypothèse (probabilité pour une classe)
+def predict_proba(x, w, b):
+    z = sum(xi * wi for xi, wi in zip(x, w)) + b
+    return sigmoid(z)
+
+# Entraînement d'un classifieur binaire avec descente de gradient
+def train_logistic_regression(X, y, epochs=1000, lr=0.1):
+    w = [0.0] * len(X[0])  # initialisation des poids
+    b = 0.0
+
+    for epoch in range(epochs):
+        for xi, yi in zip(X, y):
+            pred = predict_proba(xi, w, b)
+            error = pred - yi
+            for j in range(len(w)):
+                w[j] -= lr * error * xi[j]
+            b -= lr * error
+    return w, b
 
 
-house_colors = {
-    "Gryffindor": "#740001",
-    "Hufflepuff": "#EEBA35",
-    "Ravenclaw" : "#0F1D4A",
-    "Slytherin" : "#1A472A"
-}
+def predict_class(x, classifiers):
+    # On choisit la classe dont le modèle donne la probabilité la plus haute
+    probs = {}
+    for c in classifiers:
+        w, b = classifiers[c]
+        probs[c] = predict_proba(x, w, b)
+    return max(probs, key=probs.get)
 
 
-def extract_and_clean_columns(data, columns, class_column_name="Hogwarts House"):
-    new_data = data[[class_column_name] + columns]
-    new_data = new_data.dropna()
-    return new_data
-
-
-def extract_one_house_vs_all(selected_house, data):
-
-    one = data[selected_house]
-    all_house = []
-
-    for i in data.keys():
-        if i != selected_house:
-            all_house += data[i]
-
-    return one, all_house
-
-
-def separate_class(data, x_column, y_column, class_column_name="Hogwarts House"):
-    sep_data = {}
-    houses = data[class_column_name].unique()
-    for house in houses:
-            x_data = data[data[class_column_name] == house][x_column]
-            y_data = data[data[class_column_name] == house][y_column]
-            sep_data[house] = ([(x_data.iloc[i], y_data.iloc[i]) for i in range(len(x_data))])
-    return sep_data
-
-
-def logistic_regression(one, all, learning_rate=0.01, iteration=1000):
-    return 0
-    
-    
+def save_classifiers(classifiers, filename="classifiers.txt"):
+    with open(filename, "w") as f:
+        for class_name, (weights, bias) in classifiers.items():
+            weights_str = ",".join(f"{w}" for w in weights)
+            f.write(f"{class_name}:{weights_str};{bias}\n")
 
 
 def main():
+    # Lire le CSV
+    data = pd.read_csv("datasets/dataset_train.csv")
 
-    if len(sys.argv) != 2:
-        print("Usage: python histogram.py dataset_train.csv")
-        return
-    
-    data = load(sys.argv[1])
-    columns = data.iloc[:, 6:].columns
-    houses = data["Hogwarts House"].unique()
-    
-    ## Afficher l'ensemble des graphs pour chaque maison croisée avec les features
+    # Garder uniquement les colonnes numériques (features)
+    X_df = data.select_dtypes(include=["float64", "int64"]).dropna()
+    X = X_df.values.tolist()  # liste de listes
 
-    # Construction des couples de colonnes
-    column_pairs = []
-    for i in range(len(columns)):
-        for j in range(i + 1, len(columns)):
-            column_pairs.append((columns[i], columns[j]))
-    
-    n_plots = len(column_pairs)
-    n_cols = 8 # plus de colonnes pour une grille plus compacte
-    n_rows = math.ceil(n_plots / n_cols)
-    
-    for selected_house in houses:
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(2 * n_cols, 2 * n_rows))  # figure compacte
-        fig.suptitle(f"{selected_house} - pairplot style", fontsize=12)
-        axes = axes.flatten()
-    
-        for idx, (col_x, col_y) in enumerate(column_pairs):
-            tmp_data = extract_and_clean_columns(data, [col_x, col_y])
-            sep_data = separate_class(tmp_data, col_x, col_y)
-            one, all_house = extract_one_house_vs_all(selected_house, sep_data)
-    
-            ax = axes[idx]
-            ax.scatter([x for x, y in all_house], [y for x, y in all_house], color="gray", alpha=0.2, s=5)
-            ax.scatter([x for x, y in one], [y for x, y in one], color=house_colors[selected_house], alpha=0.6, s=5)
-            ax.set_title(f"{col_x[:5]} vs {col_y[:5]}", fontsize=6)
-            ax.tick_params(labelsize=5)
-            ax.set_xticks([])
-            ax.set_yticks([])
-            ax.grid(False)
-    
-        # Supprimer les axes vides
-        for j in range(idx + 1, len(axes)):
-            fig.delaxes(axes[j])
-    
-        plt.tight_layout(rect=[0, 0.03, 1, 0.95], h_pad=0.5, w_pad=0.5)
-        plt.show()
+    # Récupérer les classes cibles (maisons)
+    labels = data.loc[X_df.index, "Hogwarts House"].tolist()
+    classes = sorted(set(labels))  # ex: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
 
-# Boucle pour print les graphs un à un
-# for selected_house in houses:
-    # for i in range(len(columns)):
-        # for j in range(i + 1, len(columns)):
-            # tmp_data = extract_and_clean_columns(data, [columns[i], columns[j]])
-            # sep_data = separate_class(tmp_data, columns[i], columns[j])
-            # one, all_house = extract_one_house_vs_all(selected_house, sep_data)
-            # plt.scatter([ x for x, y in all_house], [ y for x, y in all_house], color="blue")
-            # plt.scatter([ x for x, y in one], [ y for x, y in one], color="pink")
-    # 
-            # plt.show()
+    X = normalize(X)
+
+    # Dictionnaire pour stocker les modèles par classe
+    classifiers = {}
+
+    for c in classes:
+        # y_c est 1 si la classe est c, 0 sinon
+        y_c = [1 if label == c else 0 for label in labels]
+        w, b = train_logistic_regression(X, y_c, epochs=1000, lr=0.1)
+        classifiers[c] = (w, b)
+
+    # Prédire sur l'ensemble d'entraînement
+    y_pred = [predict_class(xi, classifiers) for xi in X]
+
+
+    correct = sum(1 for a, b in zip(labels, y_pred) if a == b)
+    accuracy = correct / len(labels)
+    print(f"Accuracy sur l'entraînement : {accuracy:.2%}")
+
+
+    # Afficher la distribution des vraies vs. prédictions
+    counts = {c: [0, 0] for c in classes}
+    for true, pred in zip(labels, y_pred):
+        if true == pred:
+            counts[true][0] += 1
+        else:
+            counts[pred][1] += 1
+
+    save_classifiers(classifiers)
+
+    # Affichage
+    labels_x = list(counts.keys())
+    corrects = [v[0] for v in counts.values()]
+    errors = [v[1] for v in counts.values()]
+
+    bar_width = 0.35
+    x = range(len(labels_x))
+
+    plt.bar(x, corrects, width=bar_width, label="Correct", color='green')
+    plt.bar([i + bar_width for i in x], errors, width=bar_width, label="Incorrect", color='red')
+    plt.xticks([i + bar_width / 2 for i in x], labels_x)
+    plt.title("Répartition des prédictions")
+    plt.legend()
+    plt.show()
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        sys.stderr.write("\ninteruption...\nbye!!!\n")
-        exit(1)
+    main()

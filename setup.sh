@@ -4,7 +4,7 @@
 set -e
 
 # Créer l'environnement virtuel
-mkdir img
+mkdir -p img
 python3 -m venv .env
 
 # Activer l'environnement virtuel
