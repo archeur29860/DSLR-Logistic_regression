@@ -12,7 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 from utils import load
-from describe import Std, median, Mean
+from describe import Std, median, Mean, Min
 
 
 house_colors = {
@@ -210,7 +210,7 @@ def main():
             for col in data.iloc[:, 6:].columns:
                 res[col] = find_homogenous_course(data.dropna(subset=[col]), col)
             plot_histograms(data)
-            min_val = min(res.values())
+            min_val = Min(res.values())
             homogenous_course = [k for k, v in res.items() if v == min_val]
             print(f"with the test of Levene, we can determinated the most homogenous course:")
             print(f"{homogenous_course[0]} with : {min_val}")
