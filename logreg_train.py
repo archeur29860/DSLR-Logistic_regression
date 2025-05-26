@@ -2,10 +2,23 @@ import pandas as pd
 import math
 import sys
 import matplotlib.pyplot as plt
-from describe import Max, Min
+from describe import Max, Min, Mean
 from utils import load
 
 def save_normalization_params(means, stds, filename="normalization_params.txt"):
+    """
+    Save the normalization parameters (means and standard deviations) to a file.
+
+    Parameters:
+        means (list of float): The mean values for each feature.
+        stds (list of float): The standard deviation values for each feature.
+        filename (str): The name of the file to save the parameters in (default: "normalization_params.txt").
+
+    Output Format:
+        The file will contain two lines in the following format:
+            mean=value1,value2,...
+            std=value1,value2,...
+    """
     with open(filename, "w") as file:
         means_str = ",".join(map(str, means))
         stds_str = ",".join(map(str, stds))
@@ -27,7 +40,7 @@ def normalize(X):
     means = []
     stds = []
     for col in cols:
-        mean = sum(col) / len(col)
+        mean = Mean(col)
         std = (sum((x - mean) ** 2 for x in col) / len(col)) ** 0.5
         normalized.append([(x - mean) / std for x in col])
         means.append(mean)
@@ -134,60 +147,65 @@ def main():
     """
     Main training function: loads data, trains model, evaluates, and saves results.
     """
-    assert len(sys.argv) == 2, "Invalid number of arguments.\nUsage: python logreg_train.py <data.csv>"
-    data = load(sys.argv[1])
+    try:
+        assert len(sys.argv) == 2,\
+                "Invalid number of arguments.\nUsage: python logreg_train.py <data.csv>"
+        data = load(sys.argv[1])
 
-    # Select only numeric features
-    X_df = data.iloc[:, 6:]
-    X = X_df.values.tolist()
+        # Select only numeric features
+        X_df = data.iloc[:, 6:]
+        X = X_df.values.tolist()
 
-    # Get target labels
-    labels = data.loc[X_df.index, "Hogwarts House"].tolist()
-    classes = sorted(set(labels))
-    X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
+        # Get target labels
+        labels = data.loc[X_df.index, "Hogwarts House"].tolist()
+        classes = sorted(set(labels))
+        X = [[0.0 if pd.isna(xij) else xij for xij in xi] for xi in X]
 
-    X = normalize(X)
+        X = normalize(X)
 
-    # Train one-vs-all classifiers
-    classifiers = {}
-    for c in classes:
-        y_c = [1 if label == c else 0 for label in labels]
-        w, b = train_logistic_regression(X, y_c, epochs=1000, lr=0.1)
-        classifiers[c] = (w, b)
+        # Train one-vs-all classifiers
+        classifiers = {}
+        for c in classes:
+            y_c = [1 if label == c else 0 for label in labels]
+            w, b = train_logistic_regression(X, y_c, epochs=1000, lr=0.1)
+            classifiers[c] = (w, b)
 
-    # Make predictions on the training set
-    y_pred = [predict_class(xi, classifiers) for xi in X]
+        # Make predictions on the training set
+        y_pred = [predict_class(xi, classifiers) for xi in X]
 
-    # Compute accuracy
-    correct = sum(1 for a, b in zip(labels, y_pred) if a == b)
-    accuracy = correct / len(labels)
-    print(f"Training accuracy: {accuracy:.2%}")
+        # Compute accuracy
+        correct = sum(1 for a, b in zip(labels, y_pred) if a == b)
+        accuracy = correct / len(labels)
+        print(f"Training accuracy: {accuracy:.2%}")
 
-    # Save classifiers
-    save_classifiers(classifiers)
+        # Save classifiers
+        save_classifiers(classifiers)
 
-    # Prepare prediction breakdown
-    counts = {c: [0, 0] for c in classes}
-    for true, pred in zip(labels, y_pred):
-        if true == pred:
-            counts[true][0] += 1
-        else:
-            counts[pred][1] += 1
+        # Prepare prediction breakdown
+        counts = {c: [0, 0] for c in classes}
+        for true, pred in zip(labels, y_pred):
+            if true == pred:
+                counts[true][0] += 1
+            else:
+                counts[pred][1] += 1
 
-    # Visualization
-    labels_x = list(counts.keys())
-    corrects = [v[0] for v in counts.values()]
-    errors = [v[1] for v in counts.values()]
+        # Visualization
+        labels_x = list(counts.keys())
+        corrects = [v[0] for v in counts.values()]
+        errors = [v[1] for v in counts.values()]
 
-    bar_width = 0.35
-    x = range(len(labels_x))
+        bar_width = 0.35
+        x = range(len(labels_x))
 
-    plt.bar(x, corrects, width=bar_width, label="Correct", color='green')
-    plt.bar([i + bar_width for i in x], errors, width=bar_width, label="Incorrect", color='red')
-    plt.xticks([i + bar_width / 2 for i in x], labels_x)
-    plt.title("Prediction Breakdown by Class")
-    plt.legend()
-    plt.show()
+        plt.bar(x, corrects, width=bar_width, label="Correct", color='green')
+        plt.bar([i + bar_width for i in x], errors, width=bar_width, label="Incorrect", color='red')
+        plt.xticks([i + bar_width / 2 for i in x], labels_x)
+        plt.title("Prediction Breakdown by Class")
+        plt.legend()
+        plt.show()
+    except KeyboardInterrupt:
+        sys.stderr.write("\ninteruption...\nbye!!!\n")
+        exit(1)
 
 
 if __name__ == "__main__":
@@ -195,3 +213,4 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         print(e)
+

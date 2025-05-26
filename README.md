@@ -74,8 +74,18 @@ We use the [Pearson correclation coefficient](https://en.wikipedia.org/wiki/Pear
 _From this visualization, what features are you going to use for your logistic regression?_
 
 ### 3. Logistic Regression
-- ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights.
-- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights. That will save ``houses.csv``.
+
+- ``logreg_train.py``: Train using one-vs-all strategy and gradient descent. Save learned weights, biais and for the normalization standard derivation and means for all feature
+
+##### Sigmoid function
+![Alt text](img/Sigmoid-function.png)
+
+##### One vs All
+![Alt text](img/one-vs-all.png)
+
+----
+
+- ``logreg_predict.py``: Predict houses from ``dataset_test.csv`` using saved weights, biais, normalized. That will save ``houses.csv``.
 
 `houses.csv`
 ```sh
@@ -117,3 +127,4 @@ Gradient descent update rule:
 - `https://matplotlib.org/`
 - `https://pandas.pydata.org/docs/`
 - `https://fr.statisticseasily.com/glossaire/Qu'est-ce-que-l'homog%C3%A9n%C3%A9it%C3%A9-en-statistique-et-en-science-des-donn%C3%A9es/`
+- `https://mrmint.fr/logistic-regression-machine-learning-introduction-simple`

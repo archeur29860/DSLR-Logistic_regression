@@ -4,6 +4,17 @@ from utils import load
 import sys
 
 def load_normalization_params(filename="normalization_params.txt"):
+    """
+    Load the normalization parameters (mean and standard deviation) from a file.
+
+    Parameters:
+        filename (str): Path to the file containing normalization parameters.
+
+    Returns:
+        tuple: A tuple containing two lists:
+            - means (list of float): The mean values for each feature.
+            - stds (list of float): The standard deviation values for each feature.
+    """
     with open(filename, "r") as file:
         lines = file.readlines()
         means = []
@@ -20,6 +31,15 @@ def load_normalization_params(filename="normalization_params.txt"):
 
 
 def normalize_w_param(X):
+    """
+    Normalize input features using precomputed means and standard deviations.
+
+    Parameters:
+        X (list of list of float): The feature matrix to normalize.
+
+    Returns:
+        list of list of float: The normalized feature matrix.
+    """
     cols = list(zip(*X))  # transpose
     normalized = []
     means, stds = load_normalization_params()
@@ -29,6 +49,16 @@ def normalize_w_param(X):
 
 
 def main():
+    """
+    Main function that loads test data, applies normalization, performs prediction
+    using pre-trained classifiers, writes the results to a CSV file, and prints accuracy.
+
+    Command-line Arguments:
+        sys.argv[1] (str): Path to the test dataset CSV file.
+
+    Output:
+        - Writes predictions to 'houses.csv'.
+    """
     try:
         assert len(sys.argv) == 2,\
             "Usage: python histogram.py dataset_test.csv"
@@ -59,15 +89,16 @@ def main():
             f.write("Index,Hogwarts House\n")
             for i in range(len(y_pred)):
                 f.write(f"{i},{y_pred[i]}\n")
-
-        labels = data_test.loc[X_df.index, "Hogwarts House"].tolist()
-        correct = sum(1 for a, b in zip(labels, y_pred) if a == b)
-        accuracy = correct / len(labels)
-        print(f"Accuracy sur l'entraînement : {accuracy:.2%}")
     
     except Exception as e:
         print(f"Error: {e}")
+    except KeyboardInterrupt:
+        sys.stderr.write("\ninteruption...\nbye!!!\n")
+        exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
